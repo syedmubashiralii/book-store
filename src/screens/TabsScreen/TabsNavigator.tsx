@@ -13,13 +13,15 @@ import { Image } from 'react-native';
 import ChatsScreen from './ChatsScreen/ChatsScreen';
 import i18n from '../../i18n';
 import ProfileScreen from './ProfileScreen/ProfileScreen';
+import { Button, IconButton } from 'react-native-paper';
+import { deleteAccount } from '../../api/auth';
 
 const TabsStack = createBottomTabNavigator();
 
 export default function TabsScreen(props: any) {
 
     const { colors } = useTheme();
-
+    const navigation = useNavigation();
 
     const isAnonymous = auth.currentUser?.isAnonymous;
     return (
@@ -40,35 +42,98 @@ export default function TabsScreen(props: any) {
 
             {
                 isAnonymous ? null :
-                <>
-                    <TabsStack.Screen
-                        name="Chats"
-                        options={{
-                            headerShown: true,
-                            headerTitle: i18n.t('allChats'),
-                            headerStyle: {
-                                backgroundColor: colors.primary
-                            },
-                        }}
-                    >
-                        {_ => <ChatsScreen {...props} />}
-                    </TabsStack.Screen>
+                    <>
+                        <TabsStack.Screen
+                            name="Chats"
+                            options={{
+                                headerShown: true,
+                                headerTitle: i18n.t('allChats'),
+                                headerStyle: {
+                                    backgroundColor: colors.primary
+                                },
+                            }}
+                        >
+                            {_ => <ChatsScreen {...props} />}
+                        </TabsStack.Screen>
 
 
-                    <TabsStack.Screen
-                        name="profile"
-                        options={{
-                            headerShown: true,
-                            headerTitle: i18n.t('profile'),
-                            headerStyle: {
-                                backgroundColor: colors.primary
-                            },
+                        <TabsStack.Screen
+                            name="profile"
+                            options={({ navigation }) => ({
+                                headerShown: true,
+                                headerTitle: i18n.t('profile'),
+                                headerStyle: {
+                                    backgroundColor: colors.primary
+                                },
+                                headerRight: () => (
+                                    <Button
+                                        onPress={() => {
+                                            Alert.alert(
+                                                i18n.t('deleteAccount'),
+                                                i18n.t('deleteAccountConfirm'),
+                                                [
+                                                    {
+                                                        text: i18n.t('cancel'),
+                                                        style: 'cancel'
+                                                    },
+                                                    {
+                                                        text: i18n.t('delete'),
+                                                        style: 'destructive',
+                                                        onPress: async () => {
+                                                            try {
+                                                                await deleteAccount();
+                                                                // navigation.replace('Login'); // Navigate after successful deletion
+                                                            } catch (error:any) {
+                                                                console.error('Account deletion failed:', error);
+                                                                // Alert.alert(i18n.t('error'), i18n.t('deleteAccountError'));
+                                                                Alert.alert(i18n.t('error'), error.message);
+                                                            }
+                                                        }
+                                                    }
+                                                ]
+                                            );
+                                        }}
+                                    >
+                                        {i18n.t('deleteAccount')}
+                                    </Button>
 
-                        }}
-                    >
-                        {_ => <ProfileScreen {...props} />}
-                    </TabsStack.Screen>
-                </>
+                                    // <IconButton
+                                    //     icon="delete-forever"
+                                    //     iconColor="red"
+                                    //     size={24}
+                                    //     onPress={() => {
+                                    //         Alert.alert(
+                                    //             i18n.t('deleteAccount'),
+                                    //             i18n.t('deleteAccountConfirm'),
+                                    //             [
+                                    //                 {
+                                    //                     text: i18n.t('cancel'),
+                                    //                     style: 'cancel'
+                                    //                 },
+                                    //                 {
+                                    //                     text: i18n.t('delete'),
+                                    //                     style: 'destructive',
+                                    //                     onPress: async () => {
+                                    //                         try {
+                                    //                             await deleteAccount();
+                                    //                             // navigation.replace('Login'); // Navigate after successful deletion
+                                    //                         } catch (error) {
+                                    //                             console.error('Account deletion failed:', error);
+                                    //                             Alert.alert(i18n.t('error'), i18n.t('deleteAccountError'));
+                                    //                         }
+                                    //                     }
+                                    //                 }
+                                    //             ]
+                                    //         );
+                                    //     }}
+                                    // />
+                                )
+                            })}
+                        >
+                            {(props) => <ProfileScreen {...props} />}
+                        </TabsStack.Screen>
+
+                    </>
             }
 
         </TabsStack.Navigator>

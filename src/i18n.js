@@ -184,6 +184,12 @@ const resources = {
             consent: "I consent to the processing of my personal data in accordance with the",
             close: "Close",
             pleaseacceptterms: "Please accept terms and conditions",
+            deleteAccount: "Delete Account",
+            deleteAccountConfirm: "Are you sure you want to delete your account?",
+            cancel: "Cancel",
+            delete: "Delete",
+            error: "Error",
+            deleteAccountError: "Failed to delete account. Please try again.",
         },
 
     },
@@ -344,7 +350,14 @@ const resources = {
                 "يُحظر عليك تحميل أو التبرع بالكتب التي:\n" +
                 "• تحتوي على مواد منسوخة أو مسروقة.\n" +
                 "• تروج لخطاب الكراهية أو العنف أو الأنشطة غير القانونية أو تنتهك أي قوانين."
-            , pleaseacceptterms: "الرجاء قبول الشروط والأحكام"
+            , pleaseacceptterms: "الرجاء قبول الشروط والأحكام",
+            deleteAccount: "حذف الحساب",
+            deleteAccountConfirm: "هل أنت متأكد أنك تريد حذف حسابك؟",
+            cancel: "إلغاء",
+            delete: "حذف",
+            error: "خطأ",
+            deleteAccountError: "فشل حذف الحساب. يرجى المحاولة مرة أخرى.",
+            
         },
 
     },

@@ -119,7 +119,7 @@ export const loginAnonymously = async () => {
         const userCredential = await signInAnonymously(auth);
         console.log("Anonymous user signed in:", userCredential.user);
     } catch (error) {
-        
+
         console.error("Error signing in anonymously:", error);
         throw error;
     }
@@ -142,4 +142,20 @@ export const isLoginAnonymously = async (): Promise<boolean> => {
             }
         });
     });
+}
+
+
+export const deleteAccount = async () => {
+    try {
+        const user = auth.currentUser;
+        if (!user) {
+            throw new Error("auth/user-not-found");
+        }
+
+        await user.delete();
+        console.log("User account deleted successfully.");
+    } catch (error) {
+        console.error("Error deleting user account:", error);
+        throw error;
+    }
 }
