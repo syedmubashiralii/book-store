@@ -8,6 +8,46 @@ import Email from 'react-native-email-link';
 import axios from 'axios';
 import i18n from '../i18n';
 import { getUserById } from './products';
+import { getDatabase, ref, push } from 'firebase/database';
+import { getApp } from 'firebase/app';
+
+
+export const sendMessage = async (messageToSend: Message, chatId: string) => {
+  const { message, receiverId, senderId } = messageToSend;
+
+  // Get Firebase Database instance
+  const dbInstance = getDatabase(getApp());
+
+  // Generate unique ID for the message
+  const id = push(ref(dbInstance)).key;
+
+  console.log('chatId:', chatId);
+
+  const messageData = {
+    message,
+    receiverId,
+    sentAt: new Date().toISOString(),
+    senderId,
+    id
+  };
+
+  // Add message to chat
+  const messagesRef = collection(db, 'chats', chatId, 'messages');
+  await addDoc(messagesRef, messageData);
+
+  // Update chat's last message
+  const chatRef = doc(db, 'chats', chatId);
+  await updateDoc(chatRef, {
+    lastMessage: message,
+    lastMessageTime: new Date().toISOString()
+  });
+
+  // Send email to receiver
+  const receiver = await getUserById(receiverId);
+  if (receiver?.email) {
+    await sendEmail(receiver.email);
+  }
+};
 
 
 export const getChats = async (userId: string): Promise<Chat[]> => {
@@ -75,38 +115,6 @@ export const getMessages = async (chatId: string): Promise<Message[]> => {
   }
 };
 
-export const sendMessage = async (messageToSend: Message, chatId: string) => {
-  const { message, receiverId, senderId } = messageToSend;
-  const id = database().ref().push().key;
-  console.log('chatId:', chatId);
-  const messageData = {
-    message,
-    receiverId,
-    sentAt: new Date().toISOString(),
-    senderId,
-    id
-  };
-
-
-
-  // Add message to chat
-  const messagesRef = collection(db, 'chats', chatId, 'messages');
-  await addDoc(messagesRef, messageData);
-
-  // Update chat's last message
-  const chatRef = doc(db, 'chats', chatId);
-  await updateDoc(chatRef, {
-    lastMessage: message,
-    lastMessageTime: new Date().toISOString()
-  });
-
-
-  // Send email to receiver
-  const receiver = await getUserById(receiverId);
-  if (receiver?.email) {
-    await sendEmail(receiver.email);
-  }
-};
 
 const sendEmail = async (email: string) => {
   try {

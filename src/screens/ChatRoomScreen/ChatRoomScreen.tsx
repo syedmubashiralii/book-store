@@ -113,6 +113,7 @@ const ChatRoomScreen = ({ route, navigation }: any) => {
           }}
         />
       }
+      contentContainerStyle={{ flex: 1, minHeight: '100%' }}
       style={{ flex: 1, minHeight: '100%' }}
     >
       <View style={styles.container}>
@@ -127,6 +128,7 @@ const ChatRoomScreen = ({ route, navigation }: any) => {
               keyExtractor={item => item.id}
               inverted
               scrollEnabled={false}
+              style={{ marginBottom:70 }}
             /> : <Text
               style={{
                 textAlign: 'center',
@@ -146,41 +148,42 @@ const ChatRoomScreen = ({ route, navigation }: any) => {
 
 
 
-        <View style={styles.inputContainer}>
-          <TextInput
-            style={styles.input}
-            value={messageToSend.message}
-            onChangeText={(text) => {
-              setMessageToSend({
-                ...messageToSend,
-                message: text,
-              });
-            }}
-            placeholder={i18n.t('typeMessage')}
-          />
-
-          <TouchableOpacity
-            style={styles.sendButton}
-            onPress={() => {
-              sendMessageMutation.mutate();
-            }}
-            disabled={sendMessageMutation.isPending || messagesQuery.isRefetching || messageToSend.message === ""}
-          >
-            {sendMessageMutation.isPending || messagesQuery.isRefetching
-              ? (
-                <ActivityIndicator color="#007AFF" size={20} />
-              ) : (
-                <Text style={
-                  messageToSend.message === "" ? styles.sendButtonTextDisabled : styles.sendButtonText
-                }>{i18n.t('send')}</Text>
-              )}
-          </TouchableOpacity>
-        </View>
         <LoadingModal isVisible={
           messagesQuery.isLoading ||
           getChatIdQuery.isLoading ||
           userQuery.isLoading
         } />
+      </View>
+
+      <View style={styles.inputContainer}>
+        <TextInput
+          style={styles.input}
+          value={messageToSend.message}
+          onChangeText={(text) => {
+            setMessageToSend({
+              ...messageToSend,
+              message: text,
+            });
+          }}
+          placeholder={i18n.t('typeMessage')}
+        />
+
+        <TouchableOpacity
+          style={styles.sendButton}
+          onPress={() => {
+            sendMessageMutation.mutate();
+          }}
+          disabled={sendMessageMutation.isPending || messagesQuery.isRefetching || messageToSend.message === ""}
+        >
+          {sendMessageMutation.isPending || messagesQuery.isRefetching
+            ? (
+              <ActivityIndicator color="#007AFF" size={20} />
+            ) : (
+              <Text style={
+                messageToSend.message === "" ? styles.sendButtonTextDisabled : styles.sendButtonText
+              }>{i18n.t('send')}</Text>
+            )}
+        </TouchableOpacity>
       </View>
     </ScrollView>
   );
@@ -192,6 +195,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     minHeight: '100%',
     padding: 30,
+    
   },
   messageContainer: {
     margin: 10,
@@ -223,7 +227,10 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     padding: 10,
     borderTopWidth: 1,
-    borderTopColor: '#eee'
+    position: 'absolute',
+    bottom: 0,
+    borderTopColor: '#eee',
+    margin:20
   },
   input: {
     flex: 1,
